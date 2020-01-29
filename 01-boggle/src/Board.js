@@ -1,33 +1,21 @@
-import React, { Component } from "react";
-import "./Board.css";
+import React from "react";
+// import "./Game.css";
 
-class Board extends Component {
-  constructor(props) {
-    super();
-    this.state = {
-      board: [
-        ["a", "b", "c", "d"],
-        ["e", "f", "g", "h"],
-        ["i", "j", "k", "l"],
-        ["m", "n", "o", "p"]
-      ],
-      selectedCoords: ["00"]
-    };
-  }
-  getBoard() {
-    let { board, selectedCoords: coords } = this.state;
+function Board(props) {
+  function getBoard(board, coords) {
     return (
       <div className="board">
         {board.map((row, x) => (
           <div key={`row${x}`} className="board-row">
-            {row.map((square, y) => (
+            {row.map((tile, y) => (
               <span
                 key={`col${y}`}
-                className={`flex-item board-square ${
+                className={`flex-item board-tile ${
                   coords.includes(`${x}${y}`) ? "selected" : ""
                 }`}
+                onClick={() => selectTile(x, y, coords)}
               >
-                {square}
+                {tile}
               </span>
             ))}
           </div>
@@ -35,9 +23,28 @@ class Board extends Component {
       </div>
     );
   }
-  render() {
-    return <div className="container">{this.getBoard()}</div>;
+
+  function selectTile(row, col, coords) {
+    console.log("TILE SELECTED ", row, col, "coords: ", coords);
+    // if coords doesn't include selected tile and selected tile is a neighbor to last selected tile or is the first tile being selected
+    if (
+      !coords.includes(`${row}${col}`) &&
+      (!coords.length ||
+        isNeighborTile(`${row}${col}`, coords[coords.length - 1]))
+    ) {
+      props.modifySelectedCoords([...coords, `${row}${col}`]);
+    }
   }
+
+  function isNeighborTile(t1, t2) {
+    return Math.abs(+t1[0] - +t2[0]) <= 1 && Math.abs(+t1[1] - +t2[1]) <= 1;
+  }
+
+  return (
+    <div className="container">
+      {getBoard(props.board, props.selectedCoords)}
+    </div>
+  );
 }
 
 export default Board;
