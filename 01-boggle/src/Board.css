@@ -1,0 +1,26 @@
+.board-square {
+  border: solid 1px #9c9c9c;
+  padding: 40px;
+  flex: 0 0 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1px;
+}
+
+.board {
+  display: flex;
+  justify-content: space-evenly;
+  /* width: 80vw; */
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.selected {
+  background-color: #dedede;
+}
