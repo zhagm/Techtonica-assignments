@@ -10,12 +10,6 @@
 
 .board {
   display: flex;
-  justify-content: space-evenly;
-  /* width: 80vw; */
-}
-
-.container {
-  display: flex;
   justify-content: center;
   align-items: center;
   padding-top: 20px;

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./Game.css";
 import Board from "./Board.js";
+import Word from "./Word.js";
 
 class Game extends Component {
   constructor(props) {
@@ -12,30 +13,11 @@ class Game extends Component {
         ["i", "j", "k", "l"],
         ["m", "n", "o", "p"]
       ],
-      selectedCoords: ["00"]
+      selectedCoords: [[0, 0]]
     };
   }
-  getBoard() {
-    let { board, selectedCoords: coords } = this.state;
-    return (
-      <div className="board">
-        {board.map((row, x) => (
-          <div key={`row${x}`} className="board-row">
-            {row.map((tile, y) => (
-              <span
-                key={`col${y}`}
-                className={`flex-item board-tile ${
-                  coords.includes(`${x}${y}`) ? "selected" : ""
-                }`}
-                onClick={this.tileSelected}
-              >
-                {tile}
-              </span>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
+  coordsAreSame(a, b) {
+    return a.toString() === b.toString();
   }
   modifySelectedCoords = arr => {
     this.setState({ selectedCoords: arr || [] });
@@ -48,7 +30,9 @@ class Game extends Component {
           board={board}
           selectedCoords={selectedCoords}
           modifySelectedCoords={this.modifySelectedCoords}
+          coordsAreSame={this.coordsAreSame}
         />
+        <Word board={board} selectedCoords={selectedCoords} />
       </div>
     );
   }
