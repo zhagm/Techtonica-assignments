@@ -1,0 +1,41 @@
+Please answer each question in one or a few sentences.
+How do you plan on exhibiting professionalism at Techtonica?  What would be different in a full-time engineering job setting?
+    I plan to exhibit professionalism by:
+        - Always arriving earlier than the start time to make sure I'm never late, and stay until the end of the day to honor the commitment I've made to this program.
+        - Maintain reputation and trust with my peers and make sure people always feel comfortable approaching me at appropriate times.
+        - If I have a planned absence, inform someone as soon as I'm aware of it.
+        - Treat everyone with respect.
+        - Give an honest effort during work hours.
+What would you do if you just found out you are going to be an hour late tomorrow morning?
+    I would inform the people responsible for attendance, in our case the SEAM, of my planned tardiness.
+What would you do if you realized that you only had time to finish most of your work by the due date of a group project?
+    I would let my group know before hand and ask for support or guidance. I would make sure that anyone who is counting on me to finish my work is aware of my current situation. I would also make it a priority and do my best to complete the work on time.
+Knowing yourself, what are the most effective ways for you to learn and retain new information?
+    I like to watch videos, read slides, and talk to others about what I'm learning and/or explain the concepts to them.
+What is growth mindset?
+    A growth mindset is one where you believe you have control over your outcomes. It's okay to acknowledge your limitations, but with a growth mindset you also realize that your actions can impact your limitations.
+Which operating system are you using right now?  Name two other popular operating systems.
+    MacOS, which is the OS for Apple laptops. Windows and Linux are two other popular operating systems.
+Why do computers need operating systems?
+    Operating systems are like the middleground between your hardware and software. It allows the user to communicate with the computer. 
+Explain what you would do if you felt stuck on a coding problem.
+    I would try to google with different queries, then ask my peers for help with a properly phrased question. If that doesn't work, then I'd go to the SEAM, once again with a well phrased question.
+Describe the ways you plan on meeting and staying connected with new people in tech this month.
+    I plan to attend a few meetups and add people on LinkedIn. I will also follow up with my connects. I would also like to meet for coffee with relevant connections in the industry.
+Describe some examples of effective body language and what is communicated when they are used well.
+    Good posture, eye contact, and facing towards the person you are speaking to communicate confidence, competence, and interest.
+Describe some examples of effective word choice and what is communicated when they are used well.
+    Inclusive and culturally sensitive word choice make sure you're not offending anyone. Word choice for a growth mindset is also important.
+How can you build trust in a team?
+    Be reliable, competent, communicative, and honest. When giving criticism, do it without negative emotions and make sure to phrase your words in a way that the receiver will be able to understand.
+How are the devices on the internet physically connected to each other?
+    Devices are connected through either wires or wireless connection. There are fiber optic wires connecting continents and buildings together, and our laptop or phones are connected through radio waves.
+How is information physically transmitted from device to device?
+    Information is transmitted in packets through different paths which are directed by routers. Packets are chunks of information small enough to travel from one computer to another through the available paths, ie. an image can be split into many little packets.
+How does one device find another it’s trying to communicate with?
+
+What methods do devices on the internet use to communicate?
+
+How can we send data reliably even if the network is unreliable?
+    The great thing about the internet is that it is fault-tolerant, meaning there are multiple paths for information to travel. Routers determine what paths packets take, and if one path is down there are many others. The TCP (Transmission Control Protocol) will check that all the packets made it to the destination, anything that hasn't made it is communicated to the sending device by the TCP and resent.
+    
