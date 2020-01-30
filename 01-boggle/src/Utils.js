@@ -37,15 +37,15 @@ function getNewBoard(n) {
   let board = [];
   for (let row = 0; row < n; row++) {
     let rowArr = [];
-    for (let char = 0; char < n; char++) {
-      let randomChar = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+    for (let str = 0; str < n; str++) {
+      let randomChar = die[row][str][Math.floor(Math.random() * 6)];
       rowArr.push(randomChar);
     }
     board.push(rowArr);
   }
-  board;
   return board;
 }
+console.log(getNewBoard());
 
 module.exports = {
   getWordScore,
