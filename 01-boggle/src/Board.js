@@ -9,6 +9,8 @@ function Board(props) {
         isNeighborTile(`${row}${col}`, coords[coords.length - 1]))
     ) {
       props.modifySelectedCoords([...coords, [row, col]]);
+    } else if (coordsAreSame(coords[coords.length - 1], [row, col])) {
+      props.modifySelectedCoords(coords.slice(0, -1));
     }
   }
 

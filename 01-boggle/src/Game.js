@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Game.css";
 import Board from "./Board.js";
-import Word from "./Word.js";
+import { getWordScore, getNewBoard } from "./Utils.js";
 
 class Game extends Component {
   constructor(props) {
@@ -13,7 +13,8 @@ class Game extends Component {
         ["i", "j", "k", "l"],
         ["m", "n", "o", "p"]
       ],
-      selectedCoords: [[0, 0]]
+      selectedCoords: [],
+      points: 0
     };
   }
   coordsAreSame(a, b) {
@@ -22,8 +23,28 @@ class Game extends Component {
   modifySelectedCoords = arr => {
     this.setState({ selectedCoords: arr || [] });
   };
+  getWordFromCoords(board, coordsArr) {
+    return coordsArr.reduce((str, [x, y]) => {
+      return str + board[x][y];
+    }, "");
+  }
+  startNewGame = () => {
+    let board = getNewBoard();
+    this.setState({ board, selectedCoords: [], points: 0 });
+  };
+  resetSelection = () => {
+    this.setState({ selectedCoords: [] });
+  };
+  submitWord(word) {
+    this.resetSelection();
+    console.log(`Word: ${word} is being submitted!`);
+    let score = getWordScore(word);
+    console.log("score: ", score);
+    this.setState({ points: this.state.points + score });
+  }
   render() {
-    let { board, selectedCoords } = this.state;
+    let { board, selectedCoords, points } = this.state;
+    let word = this.getWordFromCoords(board, selectedCoords);
     return (
       <div className="container">
         <Board
@@ -32,7 +53,14 @@ class Game extends Component {
           modifySelectedCoords={this.modifySelectedCoords}
           coordsAreSame={this.coordsAreSame}
         />
-        <Word board={board} selectedCoords={selectedCoords} />
+        <div className="container">
+          <h1>{word}</h1>
+        </div>
+        <button onClick={() => this.submitWord(word)}>SUMBIT WORD</button>
+        <div className="container">
+          <h1>Points: {points}</h1>
+        </div>
+        <button onClick={() => this.startNewGame()}>START A NEW GAME</button>
       </div>
     );
   }
