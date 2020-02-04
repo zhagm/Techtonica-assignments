@@ -5,11 +5,15 @@ class EventRecommender {
   }
 
   addEvent(name, date, category) {
-    this.events.push(new Event(name, date, category));
+    let newEvent = new Event(name, date, category);
+    this.events.push(newEvent);
+    return newEvent;
   }
 
   addUser(name) {
-    this.users.push(new User(name));
+    let newUser = new User(name);
+    this.users.push(newUser);
+    return newUser;
   }
 
   saveUserEvent(user, event) {
@@ -41,17 +45,17 @@ class EventRecommender {
 class User {
   constructor(name, id) {
     this.name = name;
-    this.events = [];
+    this.personalEvents = [];
     this.id = id || Math.floor(Math.random() * 100000);
   }
   addUserEvent(event) {
-    this.events.push(event);
+    this.personalEvents.push(event);
   }
 }
 
 class Event {
   constructor(name, date, category, id) {
-    this.name = name;
+    this.title = name;
     this.date = new Date(date);
     this.category = category;
     this.id = id || Math.floor(Math.random() * 100000);
