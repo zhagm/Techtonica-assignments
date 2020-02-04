@@ -16,6 +16,12 @@ class EventRecommender {
     return newUser;
   }
 
+  getUserById(id) {
+    let filtered = this.users.filter(user => id === user.id);
+    if (filtered.length) return filtered[0];
+    return -1;
+  }
+
   saveUserEvent(user, event) {
     user.addUserEvent(event);
   }
@@ -33,11 +39,11 @@ class EventRecommender {
     let datesAreOnSameDay = (first, second) =>
       first.getFullYear() === second.getFullYear() &&
       first.getMonth() === second.getMonth() &&
-      first.getDate() === second.getDate();
+      first.getUTCDate() === second.getUTCDate();
     return this.events.filter(event => datesAreOnSameDay(date, event.date));
   }
 
-  findEventsbyCategory(category) {
+  findEventsByCategory(category) {
     return this.events.filter(event => event.category === category);
   }
 }

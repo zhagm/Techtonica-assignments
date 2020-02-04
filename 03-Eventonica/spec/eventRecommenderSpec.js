@@ -47,4 +47,57 @@ describe("EventRecommender", () => {
       expect(er.events.length).toEqual(0);
     });
   });
+
+  describe("findEventsByDate", () => {
+    it("returns an array of only the events that are on a specified date", () => {
+      let febSecond = new Date("2020-02-02");
+      let testEvents = [
+        {
+          name: "Grandpa's fake 80th Birthday",
+          date: "2020-02-02T03:24:00",
+          category: "Birthday"
+        },
+        { name: "February Second", date: febSecond, category: "Date" },
+        {
+          name: "Someone else's birthday",
+          date: "2020-02-10",
+          category: "Birthday"
+        },
+        { name: "Today", date: Date.now(), category: "Date" }
+      ];
+      testEvents.forEach(obj => er.addEvent(obj.name, obj.date, obj.category));
+      let febSecondEvents = er.findEventsByDate(febSecond);
+      expect(febSecondEvents.length).toEqual(2);
+    });
+  });
+
+  describe("findEventsByCategory", () => {
+    it("returns an array of only the events taht are of a specified category", () => {
+      let testEvents = [
+        {
+          name: "Grandpa's fake 80th Birthday",
+          date: "2020-02-02T03:24:00",
+          category: "Birthday"
+        },
+        { name: "February Second", date: "2020-02-02", category: "Date" },
+        {
+          name: "Someone else's birthday",
+          date: "2020-02-10",
+          category: "Birthday"
+        },
+        { name: "Today", date: Date.now(), category: "Date" }
+      ];
+      testEvents.forEach(obj => er.addEvent(obj.name, obj.date, obj.category));
+      let birthdays = er.findEventsByCategory("Birthday");
+      expect(birthdays.length).toEqual(2);
+    });
+  });
+
+  describe("getUserById", () => {
+    it("returns the user that matches the id, if no user with that id exists, it returns -1", () => {
+      let { id } = er.addUser("Zhag");
+      let userToFind = er.getUserById(id);
+      expect(userToFind.name).toEqual("Zhag");
+    });
+  });
 });
