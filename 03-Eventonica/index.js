@@ -57,3 +57,5 @@ class Event {
     this.id = id || Math.floor(Math.random() * 100000);
   }
 }
+
+module.exports = { EventRecommender, User, Event };
