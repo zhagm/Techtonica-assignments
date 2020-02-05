@@ -10,7 +10,7 @@ describe("EventRecommender", () => {
     it("adds a new Event to the system", () => {
       er.addEvent("Change Me");
       expect(er.events.length).toEqual(1);
-      expect(er.events[0].title).toEqual("Change Me"); // what are some other things you can test?
+      expect(er.events[0].name).toEqual("Change Me"); // what are some other things you can test?
     });
   });
 
@@ -32,9 +32,7 @@ describe("EventRecommender", () => {
 
   describe("deleteUser", () => {
     it("removes a User from the system", () => {
-      let userToDelete = er.addUser(
-        "Make a new user here that you will delete later"
-      );
+      let userToDelete = er.addUser("Willbe Deleted");
       er.deleteUser(userToDelete.id);
       expect(er.users.length).toEqual(0);
     });

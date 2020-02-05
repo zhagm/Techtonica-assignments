@@ -4,14 +4,14 @@ class EventRecommender {
     this.users = [];
   }
 
-  addEvent(name, date, category) {
-    let newEvent = new Event(name, date, category);
+  addEvent(name, date, category, id) {
+    let newEvent = new Event(name, date, category, id);
     this.events.push(newEvent);
     return newEvent;
   }
 
-  addUser(name) {
-    let newUser = new User(name);
+  addUser(name, id) {
+    let newUser = new User(name, id);
     this.users.push(newUser);
     return newUser;
   }
@@ -61,11 +61,13 @@ class User {
 
 class Event {
   constructor(name, date, category, id) {
-    this.title = name;
+    this.name = name;
     this.date = new Date(date);
     this.category = category;
     this.id = id || Math.floor(Math.random() * 100000);
   }
 }
 
-module.exports = { EventRecommender, User, Event };
+if (typeof module != "undefined") {
+  module.exports = { EventRecommender, User, Event };
+}
