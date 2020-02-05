@@ -10,6 +10,12 @@ class EventRecommender {
     return newEvent;
   }
 
+  getEventById(id) {
+    let filtered = this.events.filter(event => id === event.id);
+    if (filtered.length) return filtered[0];
+    return -1;
+  }
+
   addUser(name, id) {
     let newUser = new User(name, id);
     this.users.push(newUser);
@@ -55,7 +61,7 @@ class User {
     this.id = id || Math.floor(Math.random() * 100000);
   }
   addUserEvent(event) {
-    this.personalEvents.push(event);
+    if (!this.personalEvents.includes(event)) this.personalEvents.push(event);
   }
 }
 
