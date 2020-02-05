@@ -4,14 +4,23 @@ function updateListDisplay(items, divId) {
   $listParent.html(liItems);
 }
 
+function updateLocalStorage(key, item) {
+  localStorage.setItem(key, JSON.stringify(item));
+}
+
 $(document).ready(() => {
-  const eventRecommender = new EventRecommender();
+  let storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+  let storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
+  const eventRecommender = new EventRecommender(storedUsers, storedEvents);
+  if (storedUsers) updateListDisplay(eventRecommender.users, "#all-users");
+  if (storedEvents) updateListDisplay(eventRecommender.events, "#all-events");
 
   $("#add-user").submit(e => {
     e.preventDefault();
     let id = $("#add-user-id").val();
     let name = $("#add-user-name").val();
     eventRecommender.addUser(name, id);
+    updateLocalStorage("users", eventRecommender.users);
     updateListDisplay(eventRecommender.users, "#all-users");
   });
 
@@ -19,6 +28,7 @@ $(document).ready(() => {
     e.preventDefault();
     let idToDelete = $("#delete-user-id").val();
     eventRecommender.deleteUser(idToDelete);
+    updateLocalStorage("users", eventRecommender.users);
     updateListDisplay(eventRecommender.users, "#all-users");
   });
 
@@ -29,6 +39,7 @@ $(document).ready(() => {
     let category = $("#add-event-category").val();
     let date = $("#add-event-date").val();
     eventRecommender.addEvent(name, date, category, id);
+    updateLocalStorage("events", eventRecommender.events);
     updateListDisplay(eventRecommender.events, "#all-events");
   });
 
@@ -36,6 +47,7 @@ $(document).ready(() => {
     e.preventDefault();
     let idToDelete = $("#delete-event-id").val();
     eventRecommender.deleteEvent(idToDelete);
+    updateLocalStorage("events", eventRecommender.events);
     updateListDisplay(eventRecommender.events, "#all-events");
   });
 
@@ -66,6 +78,7 @@ $(document).ready(() => {
     let event = eventRecommender.getEventById(eventId);
     if (!user || !event) return;
     eventRecommender.saveUserEvent(user, event);
+    updateLocalStorage("users", eventRecommender.users);
     console.log(`Successfully added ${event.name} to ${user.name}!`);
   });
 });

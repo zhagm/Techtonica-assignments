@@ -1,7 +1,7 @@
 class EventRecommender {
-  constructor() {
-    this.events = [];
-    this.users = [];
+  constructor(users, events) {
+    this.events = events || [];
+    this.users = users || [];
   }
 
   addEvent(name, date, category, id) {
