@@ -26,6 +26,7 @@ $(document).ready(() => {
 
   $("#delete-user").submit(e => {
     e.preventDefault();
+    console.log("DELETE");
     let idToDelete = $("#delete-user-id").val();
     eventRecommender.deleteUser(idToDelete);
     updateLocalStorage("users", eventRecommender.users);
@@ -60,6 +61,10 @@ $(document).ready(() => {
     } else {
       dateFiltered = eventRecommender.findEventsByDate(date);
     }
+    let resultHeader = "No events found on that day.";
+    if (dateFiltered.length)
+      resultHeader = `Events on ${date.toUTCString().slice(0, -12)}`;
+    $("#date-search-results").html(resultHeader);
     updateListDisplay(dateFiltered, "#date-search-list");
   });
 
@@ -67,6 +72,10 @@ $(document).ready(() => {
     e.preventDefault();
     let category = $("#category-search-id").val();
     let categoryFiltered = eventRecommender.findEventsByCategory(category);
+    let resultHeader = "No events found in that category.";
+    if (categoryFiltered.length)
+      resultHeader = `Events in the '${category}' category`;
+    $("#category-search-results").html(resultHeader);
     updateListDisplay(categoryFiltered, "#category-search-list");
   });
 

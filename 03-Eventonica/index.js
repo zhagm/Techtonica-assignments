@@ -29,7 +29,7 @@ class EventRecommender {
   }
 
   saveUserEvent(user, event) {
-    user.addUserEvent(event);
+    if (!user.personalEvents.includes(event)) user.personalEvents.push(event);
   }
 
   deleteUser(userId) {
@@ -46,7 +46,9 @@ class EventRecommender {
       first.getFullYear() === second.getFullYear() &&
       first.getMonth() === second.getMonth() &&
       first.getUTCDate() === second.getUTCDate();
-    return this.events.filter(event => datesAreOnSameDay(date, event.date));
+    return this.events.filter(event =>
+      datesAreOnSameDay(date, new Date(event.date))
+    );
   }
 
   findEventsByCategory(category) {
@@ -60,9 +62,9 @@ class User {
     this.personalEvents = [];
     this.id = id || Math.floor(Math.random() * 100000);
   }
-  addUserEvent(event) {
-    if (!this.personalEvents.includes(event)) this.personalEvents.push(event);
-  }
+  // addUserEvent(event) {
+  //   if (!this.personalEvents.includes(event)) this.personalEvents.push(event);
+  // }
 }
 
 class Event {
