@@ -2,16 +2,14 @@ let { createServer } = require("http");
 let fs = require("fs");
 
 createServer(function(req, res) {
-  let filePath = "." + req.url;
-
-  switch (filePath.toLowerCase()) {
-    case "./":
+  switch (req.url.toLowerCase()) {
+    case "/":
       filePath = "./index.html";
       break;
-    case "./gabby":
+    case "/gabby":
       filePath = "./Gabby/gabby.html";
       break;
-    case "./ariel":
+    case "/ariel":
       filePath = "./ariel.html";
       break;
     default:
