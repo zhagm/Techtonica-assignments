@@ -5,9 +5,14 @@ class EventRecommender {
   }
 
   addEvent(name, date, category, id) {
-    let newEvent = new Event(name, date, category, id);
-    this.events.push(newEvent);
-    return newEvent;
+    let eventById = this.getEventById(id);
+    if (eventById === -1) {
+      let newEvent = new Event(name, date, category, id);
+      this.events.push(newEvent);
+      return newEvent;
+    } else {
+      return eventById;
+    }
   }
 
   getEventById(id) {
