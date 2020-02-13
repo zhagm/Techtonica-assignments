@@ -9,11 +9,19 @@ function updateLocalStorage(key, item) {
 }
 
 $(document).ready(() => {
+  // ticketmaster api link for later
+  // http://app.ticketmaster.com/discovery/v1/events.json?keyword=${keyword}&apikey=${apikey}
   let storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
   let storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
   const eventRecommender = new EventRecommender(storedUsers, storedEvents);
   if (storedUsers) updateListDisplay(eventRecommender.users, "#all-users");
   if (storedEvents) updateListDisplay(eventRecommender.events, "#all-events");
+
+  $("#search-ticketmaster").submit(e => {
+    e.preventDefault();
+    let keyword = $("#keyword-input").val();
+    console.log("KEYWORD IS: ", keyword);
+  });
 
   $("#add-user").submit(e => {
     e.preventDefault();

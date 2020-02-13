@@ -62,9 +62,6 @@ class User {
     this.personalEvents = [];
     this.id = id || Math.floor(Math.random() * 100000);
   }
-  // addUserEvent(event) {
-  //   if (!this.personalEvents.includes(event)) this.personalEvents.push(event);
-  // }
 }
 
 class Event {
