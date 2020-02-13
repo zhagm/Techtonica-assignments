@@ -9,8 +9,6 @@ function updateLocalStorage(key, item) {
 }
 
 $(document).ready(() => {
-  // ticketmaster api link for later
-  // http://app.ticketmaster.com/discovery/v1/events.json?keyword=${keyword}&apikey=${apikey}
   let storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
   let storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
   const eventRecommender = new EventRecommender(storedUsers, storedEvents);
@@ -20,7 +18,14 @@ $(document).ready(() => {
   $("#search-ticketmaster").submit(e => {
     e.preventDefault();
     let keyword = $("#keyword-input").val();
-    console.log("KEYWORD IS: ", keyword);
+    fetch(
+      `http://app.ticketmaster.com/discovery/v1/events.json?keyword=${keyword}&apikey=${keys.ticketmaster}`
+    )
+      .then(res => res.json())
+      .then(data => data._embedded.events)
+      .then(events => {
+        updateListDisplay(events, "#ticketmaster-events");
+      });
   });
 
   $("#add-user").submit(e => {
@@ -34,7 +39,6 @@ $(document).ready(() => {
 
   $("#delete-user").submit(e => {
     e.preventDefault();
-    console.log("DELETE");
     let idToDelete = $("#delete-user-id").val();
     eventRecommender.deleteUser(idToDelete);
     updateLocalStorage("users", eventRecommender.users);
