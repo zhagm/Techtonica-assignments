@@ -1,19 +1,43 @@
-function updateListDisplay(items, divId) {
-  const liItems = items.map(item => $("<li>").html(`${item.name}`));
-  let $listParent = $(divId);
-  $listParent.html(liItems);
-}
-
-function updateLocalStorage(key, item) {
-  localStorage.setItem(key, JSON.stringify(item));
-}
-
 $(document).ready(() => {
   let storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
   let storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
   const eventRecommender = new EventRecommender(storedUsers, storedEvents);
   if (storedUsers) updateListDisplay(eventRecommender.users, "#all-users");
   if (storedEvents) updateListDisplay(eventRecommender.events, "#all-events");
+
+  function addEvent(name, date, category, id) {
+    eventRecommender.addEvent(name, date, category, id);
+    updateLocalStorage("events", eventRecommender.events);
+    updateListDisplay(eventRecommender.events, "#all-events");
+  }
+
+  function updateListDisplay(items, divId) {
+    const liItems = items.map(item => $("<li>").html(`${item.name}`));
+    let $listParent = $(divId);
+    $listParent.html(liItems);
+  }
+
+  function updateTableDisplay(items, tableBodyId) {
+    const tableItems = items.map(item => {
+      console.log(item);
+      let tr = $("<tr>");
+      let nameTd = $("<td>").html(`${item.name}`);
+      let addButton = $("<button>").html("Add to collection");
+      addButton.click(() => {
+        // addEvent(item.id, item.name, item.dates.start.dateTime);
+        addEvent(item.name, undefined, undefined, item.id);
+      });
+      let buttonTd = $("<td>").html(addButton);
+      tr.append(nameTd);
+      tr.append(buttonTd);
+      return tr;
+    });
+    $(tableBodyId).html(tableItems);
+  }
+
+  function updateLocalStorage(key, item) {
+    localStorage.setItem(key, JSON.stringify(item));
+  }
 
   $("#search-ticketmaster").submit(e => {
     e.preventDefault();
@@ -22,10 +46,15 @@ $(document).ready(() => {
       `http://app.ticketmaster.com/discovery/v1/events.json?keyword=${keyword}&apikey=${keys.ticketmaster}`
     )
       .then(res => res.json())
-      .then(data => data._embedded.events)
+      // .then(data => console.log("data: ", data))
+      .then(data => {
+        if (data.page.totalElements === 0) return [];
+        return data._embedded.events;
+      })
       .then(events => {
-        updateListDisplay(events, "#ticketmaster-events");
-      });
+        updateTableDisplay(events, "#ticketmaster-events");
+      })
+      .catch(console.error);
   });
 
   $("#add-user").submit(e => {
@@ -47,13 +76,11 @@ $(document).ready(() => {
 
   $("#add-event").submit(e => {
     e.preventDefault();
-    let id = $("#add-event-id").val();
     let name = $("#add-event-name").val();
-    let category = $("#add-event-category").val();
     let date = $("#add-event-date").val();
-    eventRecommender.addEvent(name, date, category, id);
-    updateLocalStorage("events", eventRecommender.events);
-    updateListDisplay(eventRecommender.events, "#all-events");
+    let category = $("#add-event-category").val();
+    let id = $("#add-event-id").val();
+    addEvent(name, date, category, id);
   });
 
   $("#delete-event").submit(e => {
