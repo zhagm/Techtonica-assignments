@@ -42,19 +42,22 @@ $(document).ready(() => {
   $("#search-ticketmaster").submit(e => {
     e.preventDefault();
     let keyword = $("#keyword-input").val();
-    fetch(
-      `http://app.ticketmaster.com/discovery/v1/events.json?keyword=${keyword}&apikey=${keys.ticketmaster}`
-    )
-      .then(res => res.json())
-      // .then(data => console.log("data: ", data))
-      .then(data => {
-        if (data.page.totalElements === 0) return [];
-        return data._embedded.events;
-      })
-      .then(events => {
-        updateTableDisplay(events, "#ticketmaster-events");
-      })
-      .catch(console.error);
+    if (!keyword) updateTableDisplay([], "#ticketmaster-events");
+    else {
+      fetch(
+        `https://app.ticketmaster.com/discovery/v2/events.json?keyword=${keyword}&apikey=${keys.ticketmaster}`
+      )
+        .then(res => res.json())
+        // .then(data => console.log("data: ", data))
+        .then(data => {
+          if (data.page.totalElements === 0) return [];
+          return data._embedded.events;
+        })
+        .then(events => {
+          updateTableDisplay(events, "#ticketmaster-events");
+        })
+        .catch(console.error);
+    }
   });
 
   $("#add-user").submit(e => {
