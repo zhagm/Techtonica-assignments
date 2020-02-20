@@ -16,9 +16,17 @@ class EventRecommender {
   }
 
   getEventById(id) {
-    let filtered = this.events.filter(event => id === event.id);
+    let filtered = this.events.filter(event => id == event.id);
     if (filtered.length) return filtered[0];
     return -1;
+  }
+
+  updateEvent(id, updatedEvent) {
+    this.events = this.events.map(event => {
+      if (event.id === id) return updatedEvent;
+      return event;
+    });
+    return this.events;
   }
 
   addUser(name, id) {
@@ -42,7 +50,15 @@ class EventRecommender {
   }
 
   deleteEvent(eventId) {
-    this.events = this.events.filter(u => u.id !== eventId);
+    let deleted;
+    this.events = this.events.filter(event => {
+      if (event.id == eventId) {
+        deleted = event;
+        return false;
+      }
+      return event.id != eventId;
+    });
+    return deleted;
   }
 
   findEventsByDate(date) {
