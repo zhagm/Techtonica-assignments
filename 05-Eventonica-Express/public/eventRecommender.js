@@ -30,23 +30,47 @@ class EventRecommender {
   }
 
   addUser(name, id) {
+    if (this.users.filter(u => u.id == id).length) return;
     let newUser = new User(name, id);
     this.users.push(newUser);
     return newUser;
   }
 
   getUserById(id) {
-    let filtered = this.users.filter(user => id === user.id);
+    let filtered = this.users.filter(user => id == user.id);
     if (filtered.length) return filtered[0];
     return -1;
   }
 
-  saveUserEvent(user, event) {
-    if (!user.personalEvents.includes(event)) user.personalEvents.push(event);
+  updateUser(id, updatedUser) {
+    this.users = this.users.map(user => {
+      if (user.id == id) return updatedUser;
+      return user;
+    });
+    return this.users;
+  }
+
+  saveUserEvent(userId, eventId) {
+    let user = this.users.filter(u => u.id == userId)[0];
+    let event = this.events.filter(e => e.id == eventId)[0];
+    if (!user.personalEvents.includes(event)) {
+      user.personalEvents.push(event);
+      return true;
+    }
+    return false;
   }
 
   deleteUser(userId) {
-    this.users = this.users.filter(u => u.id !== userId);
+    let deleted;
+    this.users = this.users.filter(user => {
+      console.log(`user.id ${user.id}, userId ${userId}`);
+      if (user.id == userId) {
+        deleted = user;
+        return false;
+      }
+      return user.id != userId;
+    });
+    return deleted;
   }
 
   deleteEvent(eventId) {
