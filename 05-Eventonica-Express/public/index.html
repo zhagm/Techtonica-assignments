@@ -20,7 +20,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="keys.js"></script>
     <script src="eventRecommender.js"></script>
-    <script src="index.js"></script>
     <script src="jQuery-scripts.js"></script>
 
     <title>Hello, world!</title>
@@ -132,6 +131,7 @@
               Add Event to User
             </button>
           </form>
+          <h4 id="save-user-event-results" class="py-2"></h4>
         </div>
         <div class="col-12 col-sm-6">
           <h3>All Users</h3>
@@ -148,6 +148,7 @@
             <div class="form-group">
               <label for="add-event-id">event ID:</label>
               <input
+                name="id"
                 type="text"
                 class="form-control"
                 id="add-event-id"
@@ -161,6 +162,7 @@
             <div class="form-group">
               <label for="add-event-name">Event Name:</label>
               <input
+                name="name"
                 type="text"
                 class="form-control"
                 id="add-event-name"
@@ -170,6 +172,7 @@
             <div class="form-group">
               <label for="add-event-category">Event Category:</label>
               <input
+                name="category"
                 type="text"
                 class="form-control"
                 id="add-event-category"
@@ -179,6 +182,7 @@
             <div class="form-group">
               <label for="add-event-date">Event Date:</label>
               <input
+                name="date"
                 type="date"
                 class="form-control"
                 id="add-event-date"
@@ -189,10 +193,11 @@
           </form>
           <br />
           <h5>Delete Event</h5>
-          <form id="delete-event">
+          <form id="delete-event" action="/events" method="DELETE">
             <div class="form-group">
               <label for="delete-event-id">event ID:</label>
               <input
+                name="id"
                 type="text"
                 class="form-control"
                 id="delete-event-id"
