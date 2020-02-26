@@ -1,0 +1,25 @@
+{
+  "name": "eventonica",
+  "version": "6.0.0",
+  "description": "This project is an event managing web app, built according to the instructions found (here)[https://github.com/Techtonica/curriculum/tree/b6b700cfd7d199ccb952d79b1fe9ab09ac265754/projects/eventonica].",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jasmine",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhagm/Techtonica-assignments.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhagm/Techtonica-assignments/issues"
+  },
+  "homepage": "https://github.com/zhagm/Techtonica-assignments#readme"
+}
