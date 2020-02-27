@@ -1,10 +1,32 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const morgan = require("morgan");
+const pgp = require("pg-promise")();
+
 const { EventRecommender } = require("./public/eventRecommender");
 const { getAllData, updateData } = require("./utils/dbFunctions");
 const { categoryFilterEvents, dateFilterEvents } = require("./utils/functions");
-const morgan = require("morgan");
+
+// SQL DATABASE
+const cn = {
+  host: "localhost",
+  port: 5432,
+  database: "eventonica",
+  user: "zhag",
+  password: "password"
+};
+const db = pgp(cn);
+
+db.any("SELECT * FROM users")
+  .then(data => {
+    for (let item of data) {
+      console.log(`item is ${item.name} ${item.id}`);
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
 
 const app = express();
 const port = 3000;
