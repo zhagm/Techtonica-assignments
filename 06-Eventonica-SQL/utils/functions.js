@@ -22,8 +22,13 @@ function dateFilterEvents(date, events) {
   return events;
 }
 
+function idGenerator() {
+  return `${Math.floor(Math.random() * 100000)}`;
+}
+
 module.exports = {
   categoryFilterEvents,
   dateFilterEvents,
-  datesAreSameDay
+  datesAreSameDay,
+  idGenerator
 };

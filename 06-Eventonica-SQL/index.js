@@ -6,22 +6,15 @@ const db = require("./utils/db");
 
 // format for myself
 const morgan = require("morgan");
-// const util = require("util");
 
 const { EventRecommender } = require("./public/eventRecommender");
 const { getAllData, updateData } = require("./utils/dbFunctions");
-const { Users } = require("./utils/dbFunctions");
-const { categoryFilterEvents, dateFilterEvents } = require("./utils/functions");
-
-// db.any("SELECT * FROM users")
-//   .then(data => {
-//     for (let item of data) {
-//       console.log({ item });
-//     }
-//   })
-//   .catch(function(error) {
-//     console.error(error);
-//   });
+const { Users, Events } = require("./utils/dbFunctions");
+const {
+  categoryFilterEvents,
+  dateFilterEvents,
+  idGenerator
+} = require("./utils/functions");
 
 const app = express();
 const port = 3000;
@@ -43,10 +36,27 @@ getAllData().then(data => {
 app
   .route("/events")
   .get((req, res) => {
-    let { events } = er;
     let { category, date } = req.query;
-    events = dateFilterEvents(date, categoryFilterEvents(category, events));
-    res.status(200).send(events || []);
+    Events.getAll(category, date)
+      .then(events => {
+        res.status(200).send(events || []);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    // let { events } = er;
+    // let { category, date } = req.query;
+    // events = dateFilterEvents(date, categoryFilterEvents(category, events));
+    // res.status(200).send(events || []);
+    // .get((req, res) => {
+    //   Users.getAll()
+    //     .then(users => {
+    //       res.status(200).send(users || []);
+    //     })
+    //     .catch(error => {
+    //       console.error(error);
+    //     });
+    // })
   })
   .post((req, res) => {
     let {
@@ -136,14 +146,14 @@ app
   .post((req, res) => {
     let { name, id } = req.body;
     if (!name) res.status(400).send("ERROR: users need a name");
+    if (!id) id = idGenerator();
     else {
-      let newUser = er.addUser(name, id);
-      if (newUser) {
-        updateData(er.users, "users");
-        res.status(201).send(newUser);
-      } else {
-        res.status(400).send("ERROR: user with that ID already exists");
-      }
+      Users.createNew(name, id)
+        .then(user => {
+          if (user) res.status(201).send(user);
+          else res.status(404).send();
+        })
+        .catch(err => res.status(400).send(err));
     }
   });
 

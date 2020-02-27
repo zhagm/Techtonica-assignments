@@ -24,25 +24,25 @@ function updateData(updatedItem, property) {
 }
 
 // EVENTS
-// async function getEvents(category, date) {
-//   let events = await db
-//     .any("SELECT * FROM events")
-//     .then(data => {
-//       for (let item of data) {
-//         console.log({ item });
-//       }
-//     })
-//     .catch(function(error) {
-//       console.error(error);
-//     });
-//   // events = dateFilterEvents(date, categoryFilterEvents(category, events));
-//   return events;
-// }
+function getAllEvents(category, date) {
+  let selectQuery = "SELECT * FROM events";
+  if (category) {
+    selectQuery += ` WHERE category = '${category}'`;
+  }
+  return db
+    .any(selectQuery)
+    .then(events => {
+      return [...events];
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+}
 
 // USERS
 function getAllUsers() {
   return db
-    .any("SELECT * FROM users")
+    .any("SELECT * FROM users ")
     .then(users => {
       return [...users];
     })
@@ -61,6 +61,18 @@ function getUserById(id) {
     });
 }
 
+function createNewUser(name, id) {
+  return db
+    .any("INSERT INTO users (name, id) VALUES($1, $2)", [name, id])
+    .then(user => {
+      return getUserById(id);
+    })
+    .catch(error => {
+      console.error(error);
+      return "ERROR";
+    });
+}
+
 function updateUserById(id, updatesObj) {
   let { name } = updatesObj; // Will set up with more properties later
   return db
@@ -70,17 +82,19 @@ function updateUserById(id, updatesObj) {
       console.error(error);
       return;
     });
-  // db.none('INSERT INTO users(first_name, last_name, age) VALUES(${name.first}, $<name.last>, $/age/)', {
-  //     name: {first: 'John', last: 'Dow'},
-  //     age: 30
-  // }); Look into
 }
 
 function deleteUserById(id) {
-  return db
-    .any("DELETE FROM users WHERE id = $1", id)
-    .then(() => id)
-    .catch(console.error);
+  return getUserById(id)
+    .then(user => {
+      if (!user) return;
+      return db.any("DELETE FROM users WHERE id = $1", id);
+    })
+    .then(wasDeleted => (wasDeleted ? id : undefined))
+    .catch(err => {
+      console.error(err);
+      return;
+    });
 }
 
 async function addPersonalEventToUserById(userId, eventId) {
@@ -102,7 +116,7 @@ async function addPersonalEventToUserById(userId, eventId) {
     console.log({ saved });
     if (user.count == 1 && event.count == 1 && !saved.count == 0) {
       console.log("COMPLETED INSIDE addPersonalEventById");
-      // I thin this part works? Can't be sure until events get works DONE FOR THE NIGHT.
+      // I think this part works? Can't be sure until events get works DONE FOR THE NIGHT.
       return db.any(
         "INSERT INTO saved_events (user_id, event_id, date_saved) VALUES ($1, $2, $3);",
         [userId, eventId, Date.now()]
@@ -117,10 +131,12 @@ async function addPersonalEventToUserById(userId, eventId) {
 module.exports = {
   getAllData,
   updateData,
-  // getEvents,
+  Events: {
+    getAll: getAllEvents
+  },
   Users: {
     getAll: getAllUsers,
-    // createNew: createNewUser,
+    createNew: createNewUser,
     getById: getUserById,
     updateById: updateUserById,
     deleteById: deleteUserById,
