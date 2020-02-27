@@ -7,28 +7,9 @@ function datesAreSameDay(date1, date2) {
   );
 }
 
-function categoryFilterEvents(category, events) {
-  if (category)
-    events = events.filter(event => {
-      if (event.category && category)
-        return event.category.toLowerCase() === category.toLowerCase();
-      return false;
-    });
-  return events;
-}
-
-function dateFilterEvents(date, events) {
-  if (date) events = events.filter(event => datesAreSameDay(event.date, date));
-  return events;
-}
-
-function idGenerator() {
-  return `${Math.floor(Math.random() * 100000)}`;
-}
+const idGenerator = () => `${Math.floor(Math.random() * 100000)}`;
 
 module.exports = {
-  categoryFilterEvents,
-  dateFilterEvents,
   datesAreSameDay,
   idGenerator
 };

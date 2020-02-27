@@ -2,7 +2,7 @@ function fetchAndUpdateListDisplay(url, divId) {
   fetch(url)
     .then(res => res.json())
     .then(items => {
-      console.log({items});
+      console.log({ items });
       updateListDisplay(items, divId);
     });
 }
@@ -249,7 +249,9 @@ $(document).ready(() => {
           },
           body: JSON.stringify({ eventId })
         })
-          .then(res => res.json())
+          .then(data => {
+            return data;
+          })
           .then(() => {
             let resultHeader = `${event.name} was added to ${user.name}'s saved events`;
             $("#save-user-event-results").html(resultHeader);

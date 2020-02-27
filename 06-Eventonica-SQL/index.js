@@ -1,20 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
-const pgp = require("pg-promise")();
-const db = require("./utils/db");
-
-// format for myself
 const morgan = require("morgan");
 
 const { EventRecommender } = require("./public/eventRecommender");
 const { getAllData, updateData } = require("./utils/dbFunctions");
 const { Users, Events } = require("./utils/dbFunctions");
-const {
-  categoryFilterEvents,
-  dateFilterEvents,
-  idGenerator
-} = require("./utils/functions");
+const { idGenerator } = require("./utils/functions");
 
 const app = express();
 const port = 3000;
@@ -38,25 +30,11 @@ app
   .get((req, res) => {
     let { category, date } = req.query;
     Events.getAll(category, date)
-      .then(events => {
-        res.status(200).send(events || []);
-      })
-      .catch(error => {
-        console.error(error);
+      .then(events => res.status(200).send(events || []))
+      .catch(err => {
+        console.error(err);
+        res.status(400).send(err);
       });
-    // let { events } = er;
-    // let { category, date } = req.query;
-    // events = dateFilterEvents(date, categoryFilterEvents(category, events));
-    // res.status(200).send(events || []);
-    // .get((req, res) => {
-    //   Users.getAll()
-    //     .then(users => {
-    //       res.status(200).send(users || []);
-    //     })
-    //     .catch(error => {
-    //       console.error(error);
-    //     });
-    // })
   })
   .post((req, res) => {
     let {
@@ -103,9 +81,11 @@ app
 app
   .route("/events/:id")
   .get((req, res) => {
-    let event = er.getEventById(req.params.id);
-    if (event !== -1) res.status(200).send(event);
-    else res.status(404).send("ERROR: Event not found");
+    Events.getById(req.params.id)
+      .then(event =>
+        res.status(event ? 200 : 404).send(event || "Event not found.")
+      )
+      .catch(error => res.status(404).send(error));
   })
   .put((req, res) => {
     let { id } = req.params;
@@ -121,14 +101,13 @@ app
     res.status(200).send(updatedEvent);
   })
   .delete((req, res) => {
-    let { id } = req.params;
-    let deleted = er.deleteEvent(id);
-    if (deleted) {
-      updateData(er.events, "events");
-      res.status(200).send(deleted);
-    } else {
-      res.status(400).send("ERROR: Event not found");
-    }
+    Events.deleteById(req.params.id)
+      .then(deletedId => {
+        res
+          .status(deletedId ? 200 : 404)
+          .send(deletedId || "ERROR: Event not found");
+      })
+      .catch(error => res.status(404).send(error));
   });
 
 //    USERS
@@ -206,7 +185,3 @@ app
   });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
-module.exports = {
-  db
-};
