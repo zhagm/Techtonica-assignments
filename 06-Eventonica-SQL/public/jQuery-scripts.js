@@ -2,6 +2,7 @@ function fetchAndUpdateListDisplay(url, divId) {
   fetch(url)
     .then(res => res.json())
     .then(items => {
+      console.log({items});
       updateListDisplay(items, divId);
     });
 }

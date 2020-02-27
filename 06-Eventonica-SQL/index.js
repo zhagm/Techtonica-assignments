@@ -1,32 +1,27 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
-const morgan = require("morgan");
 const pgp = require("pg-promise")();
+const db = require("./utils/db");
+
+// format for myself
+const morgan = require("morgan");
+// const util = require("util");
 
 const { EventRecommender } = require("./public/eventRecommender");
 const { getAllData, updateData } = require("./utils/dbFunctions");
+const { Users } = require("./utils/dbFunctions");
 const { categoryFilterEvents, dateFilterEvents } = require("./utils/functions");
 
-// SQL DATABASE
-const cn = {
-  host: "localhost",
-  port: 5432,
-  database: "eventonica",
-  user: "zhag",
-  password: "password"
-};
-const db = pgp(cn);
-
-db.any("SELECT * FROM users")
-  .then(data => {
-    for (let item of data) {
-      console.log(`item is ${item.name} ${item.id}`);
-    }
-  })
-  .catch(function(error) {
-    console.error(error);
-  });
+// db.any("SELECT * FROM users")
+//   .then(data => {
+//     for (let item of data) {
+//       console.log({ item });
+//     }
+//   })
+//   .catch(function(error) {
+//     console.error(error);
+//   });
 
 const app = express();
 const port = 3000;
@@ -84,6 +79,15 @@ app
     } else {
       res.status(400).send("ERROR: Events need a name");
     }
+    /*
+    db.none(
+      "INSERT INTO users(first_name, last_name, age) VALUES(${name.first}, $<name.last>, $/age/)",
+      {
+        name: { first: "John", last: "Dow" },
+        age: 30
+      }
+    );
+     */
   });
 
 app
@@ -121,8 +125,13 @@ app
 app
   .route("/users")
   .get((req, res) => {
-    let { users } = er;
-    res.status(200).send(users || []);
+    Users.getAll()
+      .then(users => {
+        res.status(200).send(users || []);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   })
   .post((req, res) => {
     let { name, id } = req.body;
@@ -141,32 +150,53 @@ app
 app
   .route("/users/:id")
   .get((req, res) => {
-    let user = er.getUserById(req.params.id);
-    if (user !== -1) res.status(200).send(user);
-    else res.status(404).send("ERROR: User not found");
+    Users.getById(req.params.id)
+      .then(user =>
+        res.status(user ? 200 : 404).send(user || "User not found.")
+      )
+      .catch(error => res.status(404).send(error));
   })
   .put((req, res) => {
-    let { id } = req.params;
+    let updatesObj = {};
+    let { id: userId } = req.params;
     let { name, eventId } = req.body;
-    let user = er.getUserById(id);
-    if (user === -1) res.status(400).send("ERROR: User not found");
-    if (eventId) {
-      if (!user.personalEvents.filter(e => e.id == eventId).length)
-        er.saveUserEvent(id, eventId);
-    }
-    let updatedUser = { ...user };
-    if (name) updatedUser.name = name;
-    er.updateUser(id, updatedUser);
-    updateData(er.users, "users");
-    res.status(200).send(updatedUser);
+    if (name) updatesObj.name = name;
+    Users.updateById(userId, updatesObj)
+      .then(user => {
+        if (!eventId) {
+          res.status(user ? 200 : 404).send(user || "ERROR: User not found");
+        } else return Users.addPersonalEventById(userId, eventId);
+      })
+      .then(data => {
+        res.status(200).send(data);
+      })
+      .catch(error => res.status(404).send(error));
+    // let { id } = req.params;
+    // let { name, eventId } = req.body;
+    // let user = er.getUserById(id);
+    // if (user === -1) res.status(400).send("ERROR: User not found");
+    // if (eventId) {
+    //   if (!user.personalEvents.filter(e => e.id == eventId).length)
+    //     er.saveUserEvent(id, eventId);
+    // }
+    // let updatedUser = { ...user };
+    // if (name) updatedUser.name = name;
+    // er.updateUser(id, updatedUser);
+    // updateData(er.users, "users");
+    // res.status(200).send(updatedUser);
   })
   .delete((req, res) => {
-    let { id } = req.params;
-    let deleted = er.deleteUser(id);
-    if (deleted) {
-      updateData(er.users, "users");
-      res.status(200).send(deleted);
-    } else res.status(400).send("ERROR: User not found");
+    Users.deleteById(req.params.id)
+      .then(deletedId => {
+        res
+          .status(deletedId ? 200 : 404)
+          .send(deletedId || "ERROR: User not found");
+      })
+      .catch(error => res.status(404).send(error));
   });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+module.exports = {
+  db
+};

@@ -29,7 +29,46 @@
       "category": "Indeed Events",
       "id": "123",
       "dateAdded": 1582763377656
+    },
+    {
+      "name": "Glass Animals",
+      "date": "2020-03-20T00:00:00.000Z",
+      "category": "Music",
+      "id": "G5dIZp7hE7IW6",
+      "image": "https://s1.ticketm.net/dam/a/137/0b676399-3136-469b-add1-33582f0b1137_797691_RETINA_PORTRAIT_16_9.jpg",
+      "description": "Doors open at 7:00pm. Ticket text reflects door time. This show is all ages. Everyone requires a ticket regardless of age. All support acts subject to change without notice. Please note that the Mezzanine and Balcony are only accessible by stairs. Patrons needing accessible seating should call the box office.",
+      "url": "https://concerts.livenation.com/glass-animals-san-antonio-texas-03-19-2020/event/3A005846E7128F47",
+      "city": "San Antonio, TX",
+      "venue": "104 North St. Mary's Street",
+      "dateAdded": 1582769263523
+    },
+    {
+      "name": "Glass Animals",
+      "date": "2020-06-10T23:30:00.000Z",
+      "category": "Music",
+      "id": "vv1AAZA-6GkeUOkyk",
+      "image": "https://s1.ticketm.net/dam/a/137/0b676399-3136-469b-add1-33582f0b1137_797691_RETINA_PORTRAIT_16_9.jpg",
+      "description": "Egyptian Room at Old National Centre All ages. Doors: 6:30 pm Show: 7:30 pm Each online ticket purchased includes one (1) physical CD copy of a forthcoming Glass Animals music release. After your ticket purchase you'll receive an additional email in the coming weeks with instructions on how to redeem your album. US/CAN residents only. One CD per online ticket. Not valid for Fan to Fan Resale.",
+      "url": "https://concerts.livenation.com/glass-animals-indianapolis-indiana-06-10-2020/event/05005847B6806E46",
+      "city": "Indianapolis, IN",
+      "venue": "502 N. New Jersey",
+      "dateAdded": 1582769265188
+    },
+    {
+      "name": "Bonnaroo Music + Arts Festival",
+      "date": null,
+      "category": "Music",
+      "id": "G5viZ4M2ackwK",
+      "image": "https://s1.ticketm.net/dam/a/433/6c0fcbc5-6ecf-43e5-8b8d-5766494af433_1246051_RETINA_PORTRAIT_16_9.jpg",
+      "url": "https://on.fgtix.com/trk/Mq4t",
+      "city": "Manchester, TN",
+      "venue": "Between Exits 111 & Exit 114 on I-24",
+      "dateAdded": 1582769278501
     }
   ],
-  "users": []
+  "users": [
+    { "name": "2", "personalEvents": [], "id": "1" },
+    { "name": "2", "personalEvents": [], "id": "12" },
+    { "name": "2", "personalEvents": [], "id": "3" }
+  ]
 }
