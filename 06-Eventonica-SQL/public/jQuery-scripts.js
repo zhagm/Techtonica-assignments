@@ -5,6 +5,7 @@ function fetchAndUpdateListDisplay(url, divId) {
       updateListDisplay(items, divId);
     });
 }
+
 function updateListDisplay(items, divId) {
   const liItems = items.map(item => $("<li>").html(`${item.name}`));
   let $listParent = $(divId);
@@ -21,7 +22,11 @@ function updateTableDisplay(items, tableBodyId) {
         item.name,
         item.dates.start.dateTime,
         item.classifications[0].segment.name,
-        item.id
+        item.id,
+        item.images[0].url,
+        item.info,
+        item.url,
+        item._links.venues[0].href
       );
     });
     let buttonTd = $("<td>").html(addButton);
@@ -36,14 +41,56 @@ function updateLocalStorage(key, item) {
   localStorage.setItem(key, JSON.stringify(item));
 }
 
-function addEvent(name, date, category, id) {
+async function getEventLocation(path) {
+  return await fetch(
+    `https://app.ticketmaster.com${path}&apikey=${keys.ticketmaster}`
+  )
+    .then(res => res.json())
+    .then(data => {
+      return {
+        city: `${data.city.name}, ${
+          data.state ? data.state.stateCode : data.country.countryCode
+        }`,
+        venue: data.address.line1
+      };
+    })
+    .catch(console.error);
+}
+
+async function addEvent(
+  name,
+  date,
+  category,
+  id,
+  image,
+  description,
+  url,
+  locationURL
+) {
+  let city, venue;
+  if (locationURL) {
+    let location = await getEventLocation(locationURL);
+    city = location.city;
+    venue = location.venue;
+  }
   fetch("/events", {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ name, date, category, id })
+    body: JSON.stringify({
+      name,
+      date,
+      category,
+      id,
+      image,
+      description,
+      url,
+      city,
+      venue,
+      dateAdded: Date.now()
+    })
   })
     .then(() => {
       fetchAndUpdateListDisplay("/events", "#all-events");

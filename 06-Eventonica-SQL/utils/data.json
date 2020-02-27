@@ -1,1 +1,35 @@
-{"events":[{"name":"Gregory Porter & His Band","date":null,"id":"1AdbZ4sGkBgoxAZ"},{"name":"Drag Diva Brunch: Madonna","date":null,"category":"Drag","id":"G5vYZp7D5CI0E"},{"name":"James Taylor & His All-Star Band w/very special guest Jackson Browne","date":"2020-06-24T23:30:00.000Z","category":"Music","id":"1ApZAOgGkdPb4K3"},{"name":"André Rieu and his Johann Strauss Orchestra","date":"2020-03-15T00:00:00.000Z","category":"Music","id":"1AeFZ4SGknwi1pp"},{"name":"Madonna vs The Go-Go's - So Madonna & Totally Go-Go's","date":"2020-05-24T03:00:00.000Z","category":"Music","id":"rZ7HnEZ1A87AqP"},{"name":"Into The Groove - Madonna Tribute","date":"2020-04-18T17:30:00.000Z","category":"Music","id":"G5vHZ4iLAhB9z"},{"name":"Madonna & Tina Turner Tribute Show","date":"2020-05-16T22:00:00.000Z","category":"Music","id":"1AdFZpeGkUO5sHh"},{"name":"Welcome To Night Vale","date":"2020-07-13T02:00:00.000Z","category":"Arts & Theatre","id":"Z7r9jZ1Ae-Ep4"}],"users":[{"name":"USER","personalEvents":[{"name":"Welcome To Night Vale","date":"2020-07-13T02:00:00.000Z","category":"Arts & Theatre","id":"Z7r9jZ1Ae-Ep4"}],"id":"u1"},{"name":"Zhag","personalEvents":[],"id":"1"}]}
+{
+  "events": [
+    {
+      "name": "Drag Diva Brunch: Madonna",
+      "date": "2020-03-14T18:00:00.000Z",
+      "category": "Arts & Theatre",
+      "id": "G5vYZp7D5CI0E",
+      "image": "https://s1.ticketm.net/dbimages/375986a.jpg",
+      "description": "17 & under must be accompanied by a parent or guardian. 18 & over must have valid, government-issued photo ID. All non-headliner lineups are subject to change. General Admission includes 1 entrée and first free drink (Bloody Mary, or Mimosa for 21+ and juice, coffee, or tea for under 21): $39.00",
+      "url": "https://concerts.livenation.com/drag-diva-brunch-madonna-sacramento-california-03-14-2020/event/1C00584ECB3A8927",
+      "city": "Sacramento, CA",
+      "venue": "2100 Arden Way",
+      "dateAdded": 1582763298255
+    },
+    {
+      "name": "Glass Animals",
+      "date": "2020-03-12T02:00:00.000Z",
+      "category": "Music",
+      "id": "Z7r9jZ1Ae0Y8N",
+      "image": "https://s1.ticketm.net/dam/a/137/0b676399-3136-469b-add1-33582f0b1137_797691_RETINA_PORTRAIT_16_9.jpg",
+      "url": "http://www.ticketsnow.com/InventoryBrowse/TicketList.aspx?PID=2930423",
+      "city": "West Hollywood, CA",
+      "venue": "9081 Santa Monica Blvd.",
+      "dateAdded": 1582763328647
+    },
+    {
+      "name": "Winter Hackathon",
+      "date": "2020-02-21T00:00:00.000Z",
+      "category": "Indeed Events",
+      "id": "123",
+      "dateAdded": 1582763377656
+    }
+  ],
+  "users": []
+}

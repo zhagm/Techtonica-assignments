@@ -4,10 +4,32 @@ class EventRecommender {
     this.users = users || [];
   }
 
-  addEvent(name, date, category, id) {
+  addEvent(
+    name,
+    date,
+    category,
+    id,
+    image,
+    description,
+    url,
+    city,
+    venue,
+    dateAdded
+  ) {
     let eventById = this.getEventById(id);
     if (eventById === -1) {
-      let newEvent = new Event(name, date, category, id);
+      let newEvent = new Event(
+        name,
+        date,
+        category,
+        id,
+        image,
+        description,
+        url,
+        city,
+        venue,
+        dateAdded
+      );
       this.events.push(newEvent);
       return newEvent;
     } else {
@@ -109,11 +131,28 @@ class User {
 }
 
 class Event {
-  constructor(name, date, category, id) {
+  constructor(
+    name,
+    date,
+    category,
+    id,
+    image,
+    description,
+    url,
+    city,
+    venue,
+    dateAdded
+  ) {
     this.name = name;
     this.date = new Date(date);
     this.category = category;
     this.id = id || Math.floor(Math.random() * 100000);
+    this.image = image;
+    this.description = description;
+    this.url = url;
+    this.city = city;
+    this.venue = venue;
+    this.dateAdded = dateAdded || Date.now();
   }
 }
 

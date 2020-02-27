@@ -32,9 +32,31 @@ app
     res.status(200).send(events || []);
   })
   .post((req, res) => {
-    let { name, date, id, category } = req.body;
+    let {
+      name,
+      date,
+      category,
+      id,
+      image,
+      description,
+      url,
+      city,
+      venue,
+      dateAdded
+    } = req.body;
     if (name) {
-      let newEvent = er.addEvent(name, date, category || "", id);
+      let newEvent = er.addEvent(
+        name,
+        date,
+        category || "",
+        id,
+        image,
+        description,
+        url,
+        city,
+        venue,
+        dateAdded
+      );
       updateData(er.events, "events");
       res.status(201).send(newEvent);
     } else {
