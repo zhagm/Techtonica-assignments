@@ -1,6 +1,7 @@
 const fs = require("fs");
 const dataFilePath = __dirname + "/data.json";
 const db = require("./db");
+const { getSetString } = require("./functions");
 
 function getAllData() {
   return new Promise((resolve, reject) => {
@@ -45,7 +46,7 @@ function getEventById(id) {
     .then(event => event[0])
     .catch(error => {
       console.error(error);
-      return;
+      return { error };
     });
 }
 
@@ -56,95 +57,127 @@ function deleteEventById(id) {
       return db.any("DELETE FROM events WHERE id = $1", id);
     })
     .then(wasDeleted => (wasDeleted ? id : undefined))
-    .catch(err => {
-      console.error(err);
-      return;
+    .catch(error => {
+      console.error(error);
+      return { error };
     });
 }
 
-// USERS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ USERS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 function getAllUsers() {
   return db
-    .any("SELECT * FROM users ")
+    .any("SELECT * FROM users")
     .then(users => {
-      return [...users];
+      return { data: { users } };
     })
-    .catch(function(error) {
+    .catch(error => {
       console.error(error);
+      return { error };
     });
 }
 
 function getUserById(id) {
   return db
     .any("SELECT * FROM users WHERE id = $1", id)
-    .then(user => user[0])
+    .then(([user]) => {
+      if (!user) return { error: "User not found" };
+      else return { data: { user } };
+    })
     .catch(error => {
       console.error(error);
-      return;
+      return { error };
     });
 }
 
 function createNewUser(name, id) {
-  return db
-    .any("INSERT INTO users (name, id) VALUES($1, $2)", [name, id])
-    .then(user => {
-      return getUserById(id);
-    })
-    .catch(error => {
-      console.error(error);
-      return "ERROR";
-    });
+  return (
+    db
+      .any("INSERT INTO users (name, id) VALUES($1, $2)", [name, id])
+      // .then(() => getUserById(id)) // for some reason it says the function is undefined
+      .then(() => db.any("SELECT * FROM users WHERE id = $1", id))
+      .then(([user]) => {
+        if (!user) return { error: "User not created" };
+        else return { data: { user } };
+      })
+      .catch(error => {
+        console.error(error);
+        return { error };
+      })
+  );
 }
 
 function updateUserById(id, updatesObj) {
-  let { name } = updatesObj; // Will set up with more properties later
-  return db
-    .any("UPDATE users SET name = $1 WHERE id = $2", [name, id])
-    .then(user => user)
+  let setString = getSetString(updatesObj);
+  if (!setString) return Promise.resolve({ error: "Nothing to update" });
+  return db // NOTE: template strings potentially buggy with pg-promises
+    .any(`UPDATE users SET ${setString} WHERE id = '${id}'`)
+    .then(() => db.any("SELECT * FROM users WHERE id = $1", id))
+    .then(([user]) => {
+      if (!user) return { error: "User not found" };
+      else return { data: { user } };
+    })
     .catch(error => {
       console.error(error);
-      return;
+      return { error };
     });
 }
 
 function deleteUserById(id) {
-  return getUserById(id)
-    .then(user => {
-      if (!user) return;
-      return db.any("DELETE FROM users WHERE id = $1", id);
+  let deletedUser;
+  return db
+    .any("SELECT * FROM users WHERE id = $1", id)
+    .then(([user]) => {
+      if (!user) return { error: "User not found" };
+      else {
+        deletedUser = user;
+        return db.any("DELETE FROM users WHERE id = $1", id);
+      }
     })
-    .then(wasDeleted => (wasDeleted ? id : undefined))
-    .catch(err => {
-      console.error(err);
-      return;
+    .then(res => {
+      if (res.error) return res;
+      else return { data: { user: deletedUser } };
+    })
+    .catch(error => {
+      console.error(error);
+      return { error };
     });
 }
 
 async function addPersonalEventToUserById(userId, eventId) {
   try {
-    const [user] = await db.any(
-      "SELECT COUNT(*) FROM users WHERE id = $1;",
-      userId
-    );
+    const [user] = await db.any("SELECT * FROM users WHERE id = $1;", userId);
     const [event] = await db.any(
-      "SELECT COUNT(*) FROM events WHERE id = $1;",
+      "SELECT * FROM events WHERE id = $1;",
       eventId
     );
     const [
       saved
     ] = await db.any(
-      "SELECT COUNT(*) FROM saved_events WHERE user_id = $1 AND event_id = $2;",
+      "SELECT * FROM saved_events WHERE user_id = $1 AND event_id = $2;",
       [userId, eventId]
     );
-    if (user.count == 1 && event.count == 1 && saved.count == 0) {
-      return db.any(
-        "INSERT INTO saved_events (user_id, event_id) VALUES ($1, $2);",
-        [userId, eventId]
-      );
+    if (user && event && !saved) {
+      return db
+        .any("INSERT INTO saved_events (user_id, event_id) VALUES ($1, $2);", [
+          userId,
+          eventId
+        ])
+        .then(() => {
+          return { data: { user: "USER", event } };
+        });
+    } else {
+      let error;
+      if (saved) error = "User already saved event";
+      else if (!user || !event) {
+        error = `${user ? "" : "User "}${
+          event ? "" : user ? "Event" : " and event"
+        } do${!user && !event ? "" : "es"} not exist`;
+      }
+      return { error };
     }
   } catch (error) {
     console.error(error);
-    return;
+    return { error };
   }
 }
 

@@ -7,9 +7,20 @@ function datesAreSameDay(date1, date2) {
   );
 }
 
+function getSetString(propertiesObj) {
+  return Object.keys(propertiesObj)
+    .reduce((res, key) => {
+      return (
+        res + `${res.length ? "AND " : ""}"${key}" = '${propertiesObj[key]}' `
+      );
+    }, "")
+    .trim();
+}
+
 const idGenerator = () => `${Math.floor(Math.random() * 100000)}`;
 
 module.exports = {
   datesAreSameDay,
-  idGenerator
+  idGenerator,
+  getSetString
 };

@@ -37,18 +37,18 @@ app
       });
   })
   .post((req, res) => {
-    let {
-      name,
-      date,
-      category,
-      id,
-      image,
-      description,
-      url,
-      city,
-      venue,
-      dateAdded
-    } = req.body;
+    let newEventProps = {
+      name: req.body.name,
+      date: req.body.date,
+      category: req.body.category,
+      id: req.body.id,
+      image: req.body.image,
+      description: req.body.description,
+      url: req.body.url,
+      city: req.body.city,
+      venue: req.body.venue,
+      dateAdded: Date.now()
+    };
     if (name) {
       let newEvent = er.addEvent(
         name,
@@ -110,29 +110,34 @@ app
       .catch(error => res.status(404).send(error));
   });
 
-//    USERS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ USERS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 app
   .route("/users")
   .get((req, res) => {
     Users.getAll()
-      .then(users => {
-        res.status(200).send(users || []);
+      .then(({ data, error }) => {
+        if (error) res.status(400).send(`ERROR: ${error}`);
+        else res.status(200).send(data);
       })
       .catch(error => {
         console.error(error);
+        res.status(400).send(error);
       });
   })
   .post((req, res) => {
     let { name, id } = req.body;
-    if (!name) res.status(400).send("ERROR: users need a name");
     if (!id) id = idGenerator();
+    if (!name) res.status(400).send("ERROR: Users need a name");
     else {
       Users.createNew(name, id)
-        .then(user => {
-          if (user) res.status(201).send(user);
-          else res.status(404).send();
+        .then(({ data, error }) => {
+          if (error) res.status(400).send(`ERROR: ${error}`);
+          else res.status(201).send(data);
         })
-        .catch(err => res.status(400).send(err));
+        .catch(error => {
+          console.error(error);
+          res.status(400).send(error);
+        });
     }
   });
 
@@ -140,10 +145,14 @@ app
   .route("/users/:id")
   .get((req, res) => {
     Users.getById(req.params.id)
-      .then(user =>
-        res.status(user ? 200 : 404).send(user || "User not found.")
-      )
-      .catch(error => res.status(404).send(error));
+      .then(({ data, error }) => {
+        if (error) res.status(400).send(`ERROR: ${error}`);
+        else res.status(200).send(data);
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(400).send(error);
+      });
   })
   .put((req, res) => {
     let updatesObj = {};
@@ -151,35 +160,24 @@ app
     let { name, eventId } = req.body;
     if (name) updatesObj.name = name;
     Users.updateById(userId, updatesObj)
-      .then(user => {
-        if (!eventId) {
-          res.status(user ? 200 : 404).send(user || "ERROR: User not found");
-        } else return Users.addPersonalEventById(userId, eventId);
+      .then(({ data, error }) => {
+        if (error && !eventId && error == "Nothing to update")
+          res.status(400).send(`ERROR: ${error}`);
+        else if (eventId) return Users.addPersonalEventById(userId, eventId);
+        else if (error) res.status(400).send(`ERROR: ${error}`);
+        else res.status(200).send(data);
       })
-      .then(data => {
-        res.status(200).send(data);
+      .then(({ data, error }) => {
+        if (error) res.status(400).send(`ERROR: ${error}`);
+        else res.status(200).send(data);
       })
-      .catch(error => res.status(404).send(error));
-    // let { id } = req.params;
-    // let { name, eventId } = req.body;
-    // let user = er.getUserById(id);
-    // if (user === -1) res.status(400).send("ERROR: User not found");
-    // if (eventId) {
-    //   if (!user.personalEvents.filter(e => e.id == eventId).length)
-    //     er.saveUserEvent(id, eventId);
-    // }
-    // let updatedUser = { ...user };
-    // if (name) updatedUser.name = name;
-    // er.updateUser(id, updatedUser);
-    // updateData(er.users, "users");
-    // res.status(200).send(updatedUser);
+      .catch(error => res.status(404).send("ERROR" + error));
   })
   .delete((req, res) => {
     Users.deleteById(req.params.id)
-      .then(deletedId => {
-        res
-          .status(deletedId ? 200 : 404)
-          .send(deletedId || "ERROR: User not found");
+      .then(({ data, error }) => {
+        if (error) res.status(400).send(`ERROR: ${error}`);
+        else res.status(200).send(data);
       })
       .catch(error => res.status(404).send(error));
   });
