@@ -33,17 +33,40 @@ function getAllEvents(category, date) {
   return db
     .any(selectQuery)
     .then(events => {
-      return [...events];
+      return { data: { events } };
     })
-    .catch(function(error) {
+    .catch(error => {
       console.error(error);
+      return { error };
     });
 }
 
 function getEventById(id) {
   return db
     .any("SELECT * FROM events WHERE id = $1", id)
-    .then(event => event[0])
+    .then(([event]) => {
+      if (!event) return { error: "Event not found" };
+      else return { data: { event } };
+    })
+    .catch(error => {
+      console.error(error);
+      return { error };
+    });
+}
+
+function createNewEvent(eventProperties) {
+  return db
+    .query(
+      "INSERT INTO events(${this:name}) VALUES(${this:csv})",
+      eventProperties
+    )
+    .then(() =>
+      db.any("SELECT * FROM events WHERE id = $1", eventProperties.id)
+    )
+    .then(([event]) => {
+      if (!event) return { error: "User not created" };
+      else return { data: { event } };
+    })
     .catch(error => {
       console.error(error);
       return { error };
@@ -51,12 +74,20 @@ function getEventById(id) {
 }
 
 function deleteEventById(id) {
-  return getEventById(id)
-    .then(event => {
-      if (!event) return;
-      return db.any("DELETE FROM events WHERE id = $1", id);
+  let deletedEvent;
+  return db
+    .any("SELECT * FROM events WHERE id = $1", id)
+    .then(([event]) => {
+      if (!event) return { error: "Event not found" };
+      else {
+        deletedEvent = event;
+        return db.any("DELETE FROM events WHERE id = $1", id);
+      }
     })
-    .then(wasDeleted => (wasDeleted ? id : undefined))
+    .then(res => {
+      if (res.error) return res;
+      else return { data: { event: deletedEvent } };
+    })
     .catch(error => {
       console.error(error);
       return { error };
@@ -89,21 +120,21 @@ function getUserById(id) {
     });
 }
 
-function createNewUser(name, id) {
-  return (
-    db
-      .any("INSERT INTO users (name, id) VALUES($1, $2)", [name, id])
-      // .then(() => getUserById(id)) // for some reason it says the function is undefined
-      .then(() => db.any("SELECT * FROM users WHERE id = $1", id))
-      .then(([user]) => {
-        if (!user) return { error: "User not created" };
-        else return { data: { user } };
-      })
-      .catch(error => {
-        console.error(error);
-        return { error };
-      })
-  );
+function createNewUser(userProperties) {
+  return db
+    .query(
+      "INSERT INTO users(${this:name}) VALUES(${this:csv})",
+      userProperties
+    )
+    .then(() => db.any("SELECT * FROM users WHERE id = $1", userProperties.id))
+    .then(([user]) => {
+      if (!user) return { error: "User not created" };
+      else return { data: { user } };
+    })
+    .catch(error => {
+      console.error(error);
+      return { error };
+    });
 }
 
 function updateUserById(id, updatesObj) {
@@ -186,6 +217,7 @@ module.exports = {
   updateData,
   Events: {
     getAll: getAllEvents,
+    createNew: createNewEvent,
     getById: getEventById,
     deleteById: deleteEventById
   },
