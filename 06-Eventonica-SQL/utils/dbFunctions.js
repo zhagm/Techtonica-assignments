@@ -1,28 +1,5 @@
-const fs = require("fs");
-const dataFilePath = __dirname + "/data.json";
 const db = require("./db");
-const { getSetString } = require("./functions");
-
-function getAllData() {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dataFilePath, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(JSON.parse(data));
-      }
-    });
-  });
-}
-
-function updateData(updatedItem, property) {
-  getAllData().then(data => {
-    data[property] = updatedItem;
-    fs.writeFile(dataFilePath, JSON.stringify(data), err => {
-      if (err) console.error("ERROR: ", err);
-    });
-  });
-}
+const pgp = require("pg-promise")(); // for helpers
 
 // EVENTS
 function getAllEvents(category, date) {
@@ -65,6 +42,22 @@ function createNewEvent(eventProperties) {
     )
     .then(([event]) => {
       if (!event) return { error: "User not created" };
+      else return { data: { event } };
+    })
+    .catch(error => {
+      console.error(error);
+      return { error };
+    });
+}
+
+function updateEventById(id, updatesObj) {
+  const condition = pgp.as.format(" WHERE id = $1", id);
+  let updateQuery = pgp.helpers.update(updatesObj, null, "events") + condition;
+  return db
+    .any(updateQuery)
+    .then(() => db.any("SELECT * FROM events WHERE id = $1", id))
+    .then(([event]) => {
+      if (!event) return { error: "Event not found" };
       else return { data: { event } };
     })
     .catch(error => {
@@ -138,10 +131,10 @@ function createNewUser(userProperties) {
 }
 
 function updateUserById(id, updatesObj) {
-  let setString = getSetString(updatesObj);
-  if (!setString) return Promise.resolve({ error: "Nothing to update" });
-  return db // NOTE: template strings potentially buggy with pg-promises
-    .any(`UPDATE users SET ${setString} WHERE id = '${id}'`)
+  const condition = pgp.as.format(" WHERE id = $1", id);
+  let updateQuery = pgp.helpers.update(updatesObj, null, "users") + condition;
+  return db
+    .any(updateQuery)
     .then(() => db.any("SELECT * FROM users WHERE id = $1", id))
     .then(([user]) => {
       if (!user) return { error: "User not found" };
@@ -194,7 +187,7 @@ async function addPersonalEventToUserById(userId, eventId) {
           eventId
         ])
         .then(() => {
-          return { data: { user: "USER", event } };
+          return { data: { user, event } };
         });
     } else {
       let error;
@@ -213,18 +206,17 @@ async function addPersonalEventToUserById(userId, eventId) {
 }
 
 module.exports = {
-  getAllData,
-  updateData,
   Events: {
     getAll: getAllEvents,
-    createNew: createNewEvent,
     getById: getEventById,
+    createNew: createNewEvent,
+    updateById: updateEventById,
     deleteById: deleteEventById
   },
   Users: {
     getAll: getAllUsers,
-    createNew: createNewUser,
     getById: getUserById,
+    createNew: createNewUser,
     updateById: updateUserById,
     deleteById: deleteUserById,
     addPersonalEventById: addPersonalEventToUserById

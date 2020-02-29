@@ -3,25 +3,16 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 
-const { EventRecommender } = require("./public/eventRecommender");
-const { getAllData, updateData } = require("./utils/dbFunctions");
 const { Users, Events } = require("./utils/dbFunctions");
 const { idGenerator, createValidPropsObj } = require("./utils/functions");
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 // MIDDLEWARE
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname + "/public")));
 app.use(morgan("tiny"));
-
-let er;
-
-getAllData().then(data => {
-  let { users, events } = data;
-  er = new EventRecommender(users || [], events || []);
-});
 
 /* ROUTES */
 
@@ -54,7 +45,7 @@ app
     ];
     let newEventObj = createValidPropsObj(req.body, validKeys);
     if (!newEventObj.name) res.status(400).send("ERROR: Events need a name");
-    if (!newUserObj.id) newUserObj.id = idGenerator();
+    if (!newEventObj.id) newEventObj.id = idGenerator();
     else {
       Events.createNew(newEventObj)
         .then(({ data, error }) => {
@@ -82,18 +73,31 @@ app
       });
   })
   .put((req, res) => {
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     let { id } = req.params;
-    let event = er.getEventById(id);
-    if (event === -1) res.status(404).send("ERROR: Event not found");
-    let { name, date, category } = req.body;
-    updatedEvent = { ...event };
-    if (name) updatedEvent.name = name;
-    if (date) updatedEvent.date = date;
-    if (category) updatedEvent.category = category;
-    er.updateEvent(id, updatedEvent);
-    updateData(er.events, "events");
-    res.status(200).send(updatedEvent);
+    let validKeys = [
+      "name",
+      "date",
+      "category",
+      "image",
+      "description",
+      "url",
+      "city",
+      "venue"
+    ];
+    let updateEventObj = createValidPropsObj(req.body, validKeys);
+    if (!Object.keys(updateEventObj).length)
+      res.status(400).send("ERROR: Nothing to update");
+    else {
+      Events.updateById(id, updateEventObj)
+        .then(({ data, error }) => {
+          if (error) res.status(400).send(`ERROR: ${error}`);
+          else res.status(200).send(data);
+        })
+        .catch(error => {
+          console.error(error);
+          res.status(400).send(error);
+        });
+    }
   })
   .delete((req, res) => {
     Events.deleteById(req.params.id)
@@ -150,23 +154,28 @@ app
       });
   })
   .put((req, res) => {
-    let updatesObj = {};
-    let { id: userId } = req.params;
-    let { name, eventId } = req.body;
-    if (name) updatesObj.name = name;
-    Users.updateById(userId, updatesObj)
-      .then(({ data, error }) => {
-        if (error && !eventId && error == "Nothing to update")
-          res.status(400).send(`ERROR: ${error}`);
-        else if (eventId) return Users.addPersonalEventById(userId, eventId);
-        else if (error) res.status(400).send(`ERROR: ${error}`);
-        else res.status(200).send(data);
-      })
-      .then(({ data, error }) => {
-        if (error) res.status(400).send(`ERROR: ${error}`);
-        else res.status(200).send(data);
-      })
-      .catch(error => res.status(404).send("ERROR" + error));
+    // can only update or add event to users, not both
+    let { id } = req.params;
+    let { eventId } = req.body; // if eventId, any other update props ignored
+    if (eventId) {
+      Users.addPersonalEventById(id, eventId)
+        .then(({ data, error }) => {
+          if (error) res.status(400).send(`ERROR: ${error}`);
+          else res.status(200).send(data);
+        })
+        .catch(error => res.status(404).send(error));
+    } else {
+      let validKeys = ["name"];
+      let updateEventObj = createValidPropsObj(req.body, validKeys);
+      if (!Object.keys(updateEventObj).length)
+        res.status(400).send("ERROR: Nothing to update");
+      Users.updateById(id, updateEventObj)
+        .then(({ data, error }) => {
+          if (error) res.status(400).send(`ERROR: ${error}`);
+          else res.status(200).send(data);
+        })
+        .catch(error => res.status(404).send(error));
+    }
   })
   .delete((req, res) => {
     Users.deleteById(req.params.id)
@@ -177,4 +186,4 @@ app
       .catch(error => res.status(404).send(error));
   });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));

@@ -89,8 +89,8 @@ async function addEvent(
       description,
       url,
       city,
-      venue,
-      dateAdded: Date.now()
+      venue
+      // dateAdded: Date.now()
     })
   })
     .then(() => {

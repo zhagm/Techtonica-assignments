@@ -7,16 +7,6 @@ function datesAreSameDay(date1, date2) {
   );
 }
 
-function getSetString(propertiesObj) {
-  return Object.keys(propertiesObj)
-    .reduce((res, key) => {
-      return (
-        res + `${res.length ? "AND " : ""}"${key}" = '${propertiesObj[key]}' `
-      );
-    }, "")
-    .trim();
-}
-
 function createValidPropsObj(obj, validKeysArr) {
   let result = {};
   for (let key of validKeysArr) {
@@ -30,6 +20,5 @@ const idGenerator = () => `${Math.floor(Math.random() * 100000)}`;
 module.exports = {
   datesAreSameDay,
   idGenerator,
-  getSetString,
   createValidPropsObj
 };
