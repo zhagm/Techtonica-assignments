@@ -1,4 +1,4 @@
-const db = require("./db");
+const db = require("./dbConfig");
 const pgp = require("pg-promise")(); // for helpers
 
 // EVENTS
