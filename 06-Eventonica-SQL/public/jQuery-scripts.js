@@ -1,8 +1,9 @@
-function fetchAndUpdateListDisplay(url, divId) {
+function fetchAndUpdateListDisplay(url, divId, key) {
   fetch(url)
     .then(res => res.json())
-    .then(items => {
-      console.log({ items });
+    .then(data => {
+      if (Array.isArray(data)) items = data;
+      else items = data[key] || [];
       updateListDisplay(items, divId);
     });
 }
@@ -74,7 +75,7 @@ async function addEvent(
     city = location.city;
     venue = location.venue;
   }
-  fetch("/events", {
+  fetch("/api/events", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -94,13 +95,13 @@ async function addEvent(
     })
   })
     .then(() => {
-      fetchAndUpdateListDisplay("/events", "#all-events");
+      fetchAndUpdateListDisplay("/api/events", "#all-events", "events");
     })
     .catch(err => console.error(err));
 }
 
 function addUser(name, id) {
-  fetch("/users", {
+  fetch("/api/users", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -109,14 +110,15 @@ function addUser(name, id) {
     body: JSON.stringify({ name, id })
   })
     .then(res => {
-      if (res.status === 201) fetchAndUpdateListDisplay("/users", "#all-users");
+      if (res.status === 201)
+        fetchAndUpdateListDisplay("/api/users", "#all-users", "users");
     })
     .catch(err => console.error(err));
 }
 
 $(document).ready(() => {
-  fetchAndUpdateListDisplay("/events", "#all-events");
-  fetchAndUpdateListDisplay("/users", "#all-users");
+  fetchAndUpdateListDisplay("/api/events", "#all-events", "events");
+  fetchAndUpdateListDisplay("/api/users", "#all-users", "users");
 
   function formSubmitHandler(e) {
     let inputsArr = $(e.target).find("input[name]");
@@ -159,11 +161,11 @@ $(document).ready(() => {
   $("#delete-user").submit(e => {
     e.preventDefault();
     let idToDelete = $("#delete-user-id").val();
-    fetch(`/users/${idToDelete}`, {
+    fetch(`/api/users/${idToDelete}`, {
       method: "DELETE"
     })
       .then(() => {
-        fetchAndUpdateListDisplay("/users", "#all-users");
+        fetchAndUpdateListDisplay("/api/users", "#all-users", "users");
       })
       .catch(err => console.error(err));
   });
@@ -181,11 +183,11 @@ $(document).ready(() => {
   $("#delete-event").submit(e => {
     e.preventDefault();
     let idToDelete = $("#delete-event-id").val();
-    fetch(`/events/${idToDelete}`, {
+    fetch(`/api/events/${idToDelete}`, {
       method: "DELETE"
     })
       .then(() => {
-        fetchAndUpdateListDisplay("/events", "#all-events");
+        fetchAndUpdateListDisplay("/api/events", "#all-events", "events");
       })
       .catch(err => console.error(err));
   });
@@ -200,15 +202,15 @@ $(document).ready(() => {
       $("#date-search-results").html(resultHeader);
       updateListDisplay(dateFilteredEvents, "#date-search-list");
     } else {
-      fetch(`/events?date=${date}`)
+      fetch(`/api/events?date=${date}`)
         .then(res => res.json())
-        .then(dateFilteredEvents => {
+        .then(({ events: dateFilteredEvents }) => {
           if (dateFilteredEvents.length)
             resultHeader = `Events on ${new Date(date)
               .toUTCString()
               .slice(0, -12)}`;
           $("#date-search-results").html(resultHeader);
-          updateListDisplay(dateFilteredEvents, "#date-search-list");
+          updateListDisplay(dateFilteredEvents, "#date-search-list", "events");
         });
     }
   });
@@ -221,9 +223,9 @@ $(document).ready(() => {
       updateListDisplay([], "#category-search-list");
       $("#category-search-results").html(resultHeader);
     } else {
-      fetch(`/events?category=${encodeURIComponent(category)}`)
+      fetch(`/api/events?category=${encodeURIComponent(category)}`)
         .then(res => res.json())
-        .then(categoryFilteredEvents => {
+        .then(({ events: categoryFilteredEvents }) => {
           if (categoryFilteredEvents.length)
             resultHeader = `Events in the '${category}' category`;
           $("#category-search-results").html(resultHeader);
@@ -236,12 +238,12 @@ $(document).ready(() => {
     e.preventDefault();
     let userId = $("#save-user-id").val();
     let eventId = $("#save-event-id").val();
-    let userPromise = fetch(`/users/${userId}`).then(res => res.json());
-    let eventPromise = fetch(`/events/${eventId}`).then(res => res.json());
+    let userPromise = fetch(`/api/users/${userId}`).then(res => res.json());
+    let eventPromise = fetch(`/api/events/${eventId}`).then(res => res.json());
     Promise.all([userPromise, eventPromise])
       .then(([user, event]) => {
         if (user === -1 || event === -1) return;
-        fetch(`/users/${user.id}`, {
+        fetch(`/api/users/${user.id}`, {
           method: "PUT",
           headers: {
             Accept: "application/json",

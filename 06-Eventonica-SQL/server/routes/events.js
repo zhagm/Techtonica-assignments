@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { Events } = require("../../helpers/db/dbFunctions");
+const Events = require("../../helpers/db/Events");
 const { idGenerator, createValidPropsObj } = require("../../helpers/functions");
 
 router
