@@ -1,11 +1,12 @@
 import React from "react";
 
 function PostsList({ posts, getUserById }) {
+  let postsSortedByNewest = posts.sort((a, b) => b.created - a.created);
   return (
     <div className="PostsList">
       {posts.length ? (
         <ul>
-          {posts.map((post, i) => {
+          {postsSortedByNewest.map((post, i) => {
             let username = getUserById(post.userId).name;
             let date = new Date(post.created);
             return (
