@@ -240,34 +240,31 @@ $(document).ready(() => {
     let eventId = $("#save-event-id").val();
     let userPromise = fetch(`/api/users/${userId}`).then(res => res.json());
     let eventPromise = fetch(`/api/events/${eventId}`).then(res => res.json());
+    let resultHeader;
     Promise.all([userPromise, eventPromise])
-      .then(([user, event]) => {
-        if (user === -1 || event === -1) return;
-        fetch(`/api/users/${user.id}`, {
-          method: "PUT",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ eventId })
-        })
-          .then(data => {
-            return data;
-          })
-          .then(() => {
-            let resultHeader = `${event.name} was added to ${user.name}'s saved events`;
-            $("#save-user-event-results").html(resultHeader);
-          })
-          .catch(err =>
-            $("#save-user-event-results").html(
-              "ERROR: Did not save event to user's events"
-            )
-          );
+      .then(([{ user }, { event }]) => {
+        if (user && event) {
+          resultHeader = `${event.name} was added to ${user.name}'s saved events`;
+          return fetch(`/api/users/${user.id}`, {
+            method: "PUT",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ eventId })
+          });
+        }
       })
-      .catch(err =>
+      .then(res => {
+        if (res.status === 400)
+          resultHeader = "ERROR: Did not save event to user's events.";
+        $("#save-user-event-results").html(resultHeader);
+      })
+      .catch(err => {
+        console.error(err);
         $("#save-user-event-results").html(
-          "ERROR: Did not save event to user's events"
-        )
-      );
+          "ERROR: Did not save event to user's events."
+        );
+      });
   });
 });

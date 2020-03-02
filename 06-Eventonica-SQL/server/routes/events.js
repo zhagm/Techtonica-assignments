@@ -12,7 +12,7 @@ router
       .then(res.handle)
       .catch(error => {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send({ error });
       });
   })
   .post((req, res) => {
@@ -33,12 +33,12 @@ router
     else {
       Events.createNew(newEventObj)
         .then(({ data, error }) => {
-          if (error) res.status(400).send(`ERROR: ${error}`);
+          if (error) res.status(400).send({ error });
           else res.status(201).send(data);
         })
         .catch(error => {
           console.error(error);
-          res.status(400).send(error);
+          res.status(400).send({ error });
         });
     }
   });
@@ -50,7 +50,7 @@ router
       .then(res.handle)
       .catch(error => {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send({ error });
       });
   })
   .put((req, res) => {
@@ -71,12 +71,12 @@ router
     else {
       Events.updateById(id, updateEventObj)
         .then(({ data, error }) => {
-          if (error) res.status(400).send(`ERROR: ${error}`);
+          if (error) res.status(400).send({ error });
           else res.status(200).send(data);
         })
         .catch(error => {
           console.error(error);
-          res.status(400).send(error);
+          res.status(400).send({ error });
         });
     }
   })

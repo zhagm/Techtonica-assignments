@@ -11,7 +11,7 @@ router
       .then(res.handle)
       .catch(error => {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send({ error });
       });
   })
   .post((req, res) => {
@@ -27,7 +27,7 @@ router
         })
         .catch(error => {
           console.error(error);
-          res.status(400).send(error);
+          res.status(400).send({ error });
         });
     }
   });
@@ -39,7 +39,7 @@ router
       .then(res.handle)
       .catch(error => {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send({ error });
       });
   })
   .put((req, res) => {
@@ -47,28 +47,22 @@ router
     let { id } = req.params;
     let { eventId } = req.body; // if eventId, any other update props ignored
     if (eventId) {
-      Users.addPersonalEventById(id, eventId)
-        .then(({ data, error }) => {
-          if (error) res.status(400).send(`ERROR: ${error}`);
-          else res.status(200).send(data);
-        })
+      Users.saveUserEvent(id, eventId)
+        .then(res.handle)
         .catch(error => {
           console.error(error);
-          res.status(404).send(error);
+          res.status(400).send({ error });
         });
     } else {
       let validKeys = ["name"];
       let updateEventObj = createValidPropsObj(req.body, validKeys);
       if (!Object.keys(updateEventObj).length)
-        res.status(400).send("ERROR: Nothing to update");
+        res.status(400).send({ error: "ERROR: Nothing to update" });
       Users.updateById(id, updateEventObj)
-        .then(({ data, error }) => {
-          if (error) res.status(400).send(`ERROR: ${error}`);
-          else res.status(200).send(data);
-        })
+        .then(res.handle)
         .catch(error => {
           console.error(error);
-          res.status(404).send(error);
+          res.status(400).send({ error });
         });
     }
   })
@@ -77,7 +71,7 @@ router
       .then(res.handle)
       .catch(error => {
         console.error(error);
-        res.status(404).send(error);
+        res.status(400).send({ error });
       });
   });
 

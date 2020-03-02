@@ -80,7 +80,7 @@ function deleteUserById(id) {
     });
 }
 
-async function addPersonalEventToUserById(userId, eventId) {
+async function saveUserEvent(userId, eventId) {
   try {
     const [user] = await db.any("SELECT * FROM users WHERE id = $1;", userId);
     const [event] = await db.any(
@@ -124,5 +124,5 @@ module.exports = {
   createNew: createNewUser,
   updateById: updateUserById,
   deleteById: deleteUserById,
-  addPersonalEventById: addPersonalEventToUserById
+  saveUserEvent
 };

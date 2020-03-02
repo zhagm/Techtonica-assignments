@@ -7,7 +7,6 @@ function getAllEvents(category, date) {
   if (category) selectQuery += ` WHERE category = '${category}'`;
   else if (date)
     selectQuery += ` ${category ? "AND " : "WHERE "}date = '${date}'`;
-  console.log({ selectQuery });
   return db
     .any(selectQuery)
     .then(events => {
