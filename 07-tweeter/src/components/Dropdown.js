@@ -1,7 +1,6 @@
 import React from "react";
 
-function Dropdown(props) {
-  let { activeUserId, selectUser, allUsers } = props;
+function Dropdown({ activeUserId, selectUser, allUsers }) {
   return (
     <div className="Dropdown">
       <label>

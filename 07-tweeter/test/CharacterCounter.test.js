@@ -12,14 +12,12 @@ describe("<CharacterCounter /> rendering", () => {
   });
 
   it("should render negative characters remaining if count exceeds max", () => {
-    let wrapper = mount(<CharacterCounter max={100} chars={101} />);
-    expect(wrapper.text()).toEqual("-1 characters remaining");
+    let wrapper = mount(<CharacterCounter max={100} chars={1000} />);
+    expect(wrapper.text()).toEqual("-900 characters remaining");
   });
 
   it("should render without an error and default to zero if no props are passed", () => {
     let wrapper = mount(<CharacterCounter />);
     expect(wrapper.text()).toEqual("0 characters remaining");
   });
-
-  // add test to check color?
 });
