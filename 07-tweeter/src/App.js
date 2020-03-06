@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import TweetForm from "./TweetForm";
-import PostsList from "./PostsList";
+import TweetForm from "./components/TweetForm";
+import PostsList from "./components/PostsList";
 
 function App() {
   const [posts, setPosts] = useState([]);
