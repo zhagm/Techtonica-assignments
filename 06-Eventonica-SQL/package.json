@@ -4,7 +4,7 @@
   "description": "This project is an event managing web app, built according to the instructions found (here)[https://github.com/Techtonica/curriculum/tree/b6b700cfd7d199ccb952d79b1fe9ab09ac265754/projects/eventonica].",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "morgan": "^1.9.1",
     "pg-promise": "^10.4.4"
   },
